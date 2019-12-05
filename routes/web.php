@@ -13,9 +13,11 @@
 
 Auth::routes();
 
-// Route::get('/', 'MainController@index');
+
 
 Route::get('/', 'Admin\HomeController@index');
+
+Route::group(['middleware' => 'admin'], function() {
 
 Route::get('/admin/user', 'Admin\UserController@index');
 
@@ -81,3 +83,4 @@ Route::delete('/admin/borrow/{id}', 'Admin\BorrowController@destroy');
 
 Route::get('/admin/librarycardlisting', 'Admin\BorrowController@cardlisting');
 
+});

@@ -70,7 +70,7 @@ class UserController extends Controller
         ]);
         
         LibraryCard::Create([
-            'reader_id' => User::orderBy('name', 'desc')->first()->id,
+            'reader_id' => Reader::orderBy('name', 'desc')->first()->id,
             'admin_id' =>  Auth::user()->id,
             'date_create' => Carbon::now()->toDateTimeString(),
             'date_end' =>  Carbon::now()->addYears(5)->toDateTimeString(),

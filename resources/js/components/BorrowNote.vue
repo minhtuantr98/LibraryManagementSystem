@@ -1,6 +1,6 @@
 <template>
 
- <form action="/admin/book" method="post" enctype="multipart/form-data">
+ <form action="/admin/book" method="post" enctype="multipart/form-data" @submit.prevent="test()">
             <div class="form-group">
                <br>
                 <label>ID Reader</label>
@@ -56,6 +56,10 @@
                 })
         },
     methods: {
+      test() {
+          console.log()
+      },
+
       onSelect (items, lastSelectItem) {
         this.items = items
         this.lastSelectItem = lastSelectItem
