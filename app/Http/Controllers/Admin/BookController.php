@@ -17,8 +17,12 @@ use App\Http\Controllers\Controller;
 class BookController extends Controller
 {
     public function index()
-    {
-        $books = Book::all();
+    {   
+        if(!isset($_GET['title'])) {
+            $_GET['title'] ='';
+        }
+
+        $books = Book::where('title', 'LIKE', '%'.$_GET['title'].'%')->paginate(5);
 
         return view('admin.books.index', compact('books'));
     }

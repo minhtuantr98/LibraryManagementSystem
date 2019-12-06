@@ -57,6 +57,8 @@ Route::delete('/admin/location/{id}', 'Admin\LocationController@destroy');
 
 Route::get('/admin/book', 'Admin\BookController@index');
 
+Route::get('/search', 'Admin\BookController@index');
+
 Route::get('/admin/booklisting', 'Admin\BookController@listing');
 
 Route::get('/admin/book/{id}/edit', 'Admin\BookController@edit');
