@@ -46,7 +46,7 @@
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
                         <div id="category">
-                            <p>{{ $value->title }}</p>
+                            <p>{{ $value->name }}</p>
                             <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure ?') "
                                 value="Delete">
                             <a class="btn btn-primary" href="/admin/book/{{ $value->id }}/edit" role="button">Edit</a>

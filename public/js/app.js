@@ -1878,7 +1878,10 @@ __webpack_require__.r(__webpack_exports__);
       // If value is falsy, reset searchText & searchItem
       items: [],
       item2: [],
-      lastSelectItem: {}
+      lastSelectItem: {},
+      books: [],
+      reader: '',
+      total: 0
     };
   },
   created: function created() {
@@ -1900,6 +1903,29 @@ __webpack_require__.r(__webpack_exports__);
     });
   },
   methods: {
+    createBorrowNote: function createBorrowNote() {
+      var _this2 = this;
+
+      var i = 0;
+
+      for (i = 0; i < this.items.length; i++) {
+        this.books[i] = this.items[i].value;
+      }
+
+      this.reader = this.item2.value;
+      this.total = this.items.length;
+      axios.post('/admin/borrow', {
+        books: this.books,
+        reader: this.reader,
+        total: this.total
+      }).then(function (response) {
+        window.location.href = "/admin/borrow";
+      })["catch"](function (error) {
+        _this2.errors = [];
+
+        _this2.errors.push(error);
+      });
+    },
     onSelect: function onSelect(items, lastSelectItem) {
       this.items = items;
       this.lastSelectItem = lastSelectItem;
@@ -37889,6 +37915,12 @@ var render = function() {
         action: "/admin/book",
         method: "post",
         enctype: "multipart/form-data"
+      },
+      on: {
+        submit: function($event) {
+          $event.preventDefault()
+          return _vm.createBorrowNote()
+        }
       }
     },
     [
@@ -55409,8 +55441,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! F:\librarymanagement\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! F:\librarymanagement\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\HP\Desktop\test\LibraryManagementSystem\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\HP\Desktop\test\LibraryManagementSystem\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

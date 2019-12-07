@@ -1,6 +1,6 @@
 <template>
 
- <form action="/admin/book" method="post" enctype="multipart/form-data" @submit.prevent="test()">
+ <form action="/admin/book" method="post" enctype="multipart/form-data" @submit.prevent="createBorrowNote()">
             <div class="form-group">
                <br>
                 <label>ID Reader</label>
@@ -35,6 +35,9 @@
         items: [],
         item2: [],
         lastSelectItem: {},
+        books: [],
+        reader: '',
+        total : 0
       }
     },
    created() {
@@ -56,9 +59,22 @@
                 })
         },
     methods: {
-      test() {
-          console.log()
-      },
+      createBorrowNote() {
+            var i = 0;
+          for(i = 0; i < this.items.length ; i++){
+          this.books[i] = this.items[i].value;
+          }
+          this.reader = this.item2.value;
+          this.total = this.items.length;
+                axios.post('/admin/borrow', {books:this.books, reader:this.reader, total:this.total})
+                    .then(response => {    
+                        window.location.href = "/admin/borrow"
+                    })
+                    .catch(error => {
+                        this.errors = [] 
+                        this.errors.push(error);
+                    });
+            },
 
       onSelect (items, lastSelectItem) {
         this.items = items

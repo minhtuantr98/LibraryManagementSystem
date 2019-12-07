@@ -16,7 +16,7 @@ class BorrowedNote extends Model
      * @var array
      */
     protected $fillable = [
-        'library_card_id'
+        'library_card_id', 'date_create', 'date_pay', 'is_payed', 'total'
     ];
 
      /**

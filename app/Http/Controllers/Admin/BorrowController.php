@@ -3,12 +3,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Auth;
 use DB;
+use Auth;
 use App\Book;
 use App\Location;
+use Carbon\Carbon;
+use App\BookDetail;
 use App\LibraryCard;
 use App\BorrowedNote;
+use App\BorrowedNoteDetail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +21,12 @@ class BorrowController extends Controller
 {
     public function index()
     {
-        $notes = BorrowedNote::all();
+        $notes = DB::table('borrowed_note')
+            ->join('library_card', 'borrowed_note.library_card_id', '=', 'library_card.id')
+            ->join('readers', 'readers.id', '=', 'library_card.reader_id')
+            ->select('borrowed_note.id', 'readers.name')
+            ->orderBy('id', 'asc')
+            ->get();
 
         return view('admin.notes.index', compact('notes'));
     }
@@ -78,41 +86,32 @@ class BorrowController extends Controller
 
     public function create()
     {
-        $librarycard = LibraryCard::all();
-        $books = Book::all();
-
-        return view('admin.notes.create', compact('librarycard', 'books'));
+        return view('admin.notes.create');
     }
 
     public function store(Request $request)
     {        
-        $this->validate($request, [
-            'title' => 'required|unique:books',
-            'pages' => 'required|digits_between:2,5',
-            'price' => 'required',
-            'total' => 'required|digits_between:2,5',
-            'company' => 'required',
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-        
-        if ($request->hasFile('file')) {
-            $filename = $request->file->getClientOriginalName();
-            $request->file->storeAs('public/upload', $filename);
-            Book::Create([
-                'admin_id' => Auth::user()->id,
-                'title' => $request->title,
-                'slug' => Str::slug($request->title),
-                'number_of_page' => $request->pages,
-                'price' => $request->price,
-                'total' => $request->total,
-                'author' => $request->author,
-                'image' => $filename,
-                'publishing_company' => $request->company,
-                'location_id' => $request->location,
-                'category_id' => $request->category,
+            $books = $request->books;
+
+            BorrowedNote::Create([
+                'library_card_id' => $request->reader ,
+                'date_create' => Carbon::now(),
+                'date_pay' => Carbon::now()->addMonth(6),
+                'is_payed' => 0,
+                'total' => $request->total
             ]);
-            return redirect('admin/book')->with('message', 'CREATED SUCCESS!');
-        }    
+            
+            for($i = 0 ; $i < $request->total; $i++) {
+                BorrowedNoteDetail::Create([
+                    'book_detail_id' => BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->first()->id,
+                    'borrowed_note_id' => BorrowedNote::orderBy('id', 'desc')->first()->id,
+                    'indemnification_money' => 0,
+                    'date_pay_real' => Carbon::now()->addMonth(6),
+                ]);
+                
+            }
+
+            return (['message' => 'Success']);
     }
 
     public function destroy($id)
