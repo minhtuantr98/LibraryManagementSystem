@@ -40,9 +40,7 @@ class BorrowController extends Controller
 
     public function edit($id)
     {
-        $categories = Category::all();
-        $location = Location::all();
-        $book = Book::findOrFail($id);
+        $borrownote = DB::table('borrowred_note');
 
         return view('admin.books.edit', compact('categories', 'location', 'book'));
     }
@@ -108,7 +106,6 @@ class BorrowController extends Controller
                     'indemnification_money' => 0,
                     'date_pay_real' => Carbon::now()->addMonth(6),
                 ]);
-                
             }
 
             return (['message' => 'Success']);

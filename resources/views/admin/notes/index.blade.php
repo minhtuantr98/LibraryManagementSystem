@@ -49,7 +49,7 @@
                             <p>{{ $value->name }}</p>
                             <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure ?') "
                                 value="Delete">
-                            <a class="btn btn-primary" href="/admin/book/{{ $value->id }}/edit" role="button">Edit</a>
+                            <a class="btn btn-primary" href="/admin/borrow/{{ $value->id }}/pay" role="button">Pay</a>
                         </div>
                     </form>
                 </td>
