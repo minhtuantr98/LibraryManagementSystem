@@ -88,7 +88,8 @@ Route::get('/admin/librarycardlisting', 'Admin\BorrowController@cardlisting');
 });
 
 // API 
-Route::get('api/book', 'ApiController@index');
+Route::get('api/listbook', 'ApiController@index');
 
 Route::get('api/book/{id}', 'ApiController@detail');
 
+Route::get('api/image/{slug}', 'ApiController@getImage');
