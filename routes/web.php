@@ -88,8 +88,19 @@ Route::get('/admin/librarycardlisting', 'Admin\BorrowController@cardlisting');
 });
 
 // API 
-Route::get('api/listbook', 'ApiController@index');
+Route::group([
+    'prefix' => 'api'
+], function () {
+    Route::get('listbook', 'ApiController@index');
 
-Route::get('api/book/{id}', 'ApiController@detail');
+    Route::get('book/{id}', 'ApiController@detail');
 
-Route::get('api/image/{slug}', 'ApiController@getImage');
+    Route::get('image/{slug}', 'ApiController@getImage');
+
+    Route::post('login', 'ApiController@login');
+
+    Route::post('register', 'ApiController@signup');
+
+    Route::get('logout', 'ApiController@logout');
+      
+});
