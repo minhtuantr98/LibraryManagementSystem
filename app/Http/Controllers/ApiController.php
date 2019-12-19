@@ -196,7 +196,12 @@ class ApiController extends Controller
     }
 
     public function destroy($id)
-    {
+    {   
+        if( BookDetail::where('book_id', $id)->where('isAvailable', 0)->first() )
+        {
+            return response()
+            ->json(['error' => 'This book has already been borrowed']);
+        }
         Book::where('id', $id)->firstOrFail()->delete();
 
         return response()
