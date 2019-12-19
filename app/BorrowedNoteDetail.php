@@ -16,7 +16,7 @@ class BorrowedNoteDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'book_detail_id', 'borrowed_note_id', 'indemnification_money', 'date_pay_real', 'total'
+        'book_detail_id', 'borrowed_note_id', 'indemnification_money', 'date_pay_real', 
     ];
 
      /**
@@ -25,4 +25,5 @@ class BorrowedNoteDetail extends Model
      * @var string
      */
     protected $table = 'borrowed_note_detail';
+    protected $primaryKey = 'borrowed_note_id';
 }

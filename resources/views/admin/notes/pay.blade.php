@@ -21,17 +21,32 @@
         </div>
         @endif
         <div class="panel-body">
-            <br>
-            <form action="/admin/borrow/{{ $book->id }}" method="post" enctype="multipart/form-data">
+            <br>    
+            @foreach ($borrownote as $value)
+            <form action="/admin/borrow/{{ $id }}/{{ $value->book_detail_id}}/pay" method="post" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 {{ method_field('PUT') }}
                 <div class="form-group">
-                        <label>Title</label>
-                        <input class="form-control" placeholder="Enter title..." type="text" name="title" value="{{$book->title}}"><br>
-                        <label>Number of page</label>
-                        <input class="form-control" placeholder="Enter pages..." type="text" name="pages" value="{{$book->number_of_page}}"><br>
-                        <input class="btn btn-primary" type="submit" value="Pay">
+                        <label> {{ $value->book_detail_id }}</label>
+                        <label>Money imdemnification</label>
+                <input class="form-control" placeholder="Enter pages..." type="text" name="indemnification_money" value="{{$value->indemnification_money}}" 
+                @if ($value->indemnification_money == 0)
+                    {{ "disabled" }}
+                @endif
+                >
                     </div>
+                @if ($value->indemnification_money == -1)
+                <input class="btn btn-primary" type="submit" value="Pay">
+                @else 
+                    <p style="color:blue">Payed</p>
+                @endif
+            </form>
+            <br>
+            @endforeach
+            <form action="/admin/borrow/{{ $id }}" method="post" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                {{ method_field('PUT') }}
+                <input class="btn btn-primary" type="submit" value="Pay Note">
             </form>
         </div>
     </div>

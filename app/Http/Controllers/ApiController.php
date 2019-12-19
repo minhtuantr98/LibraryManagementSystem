@@ -96,7 +96,8 @@ class ApiController extends Controller
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
-            )->toDateTimeString()
+            )->toDateTimeString() ,
+            'name' => auth()->user()->name,
         ]);
     }
   
@@ -111,5 +112,94 @@ class ApiController extends Controller
         return response()->json([
             'message' => 'Successfully logged out'
         ]);
+    }
+
+    public function edit($id)
+    {
+        $categories = Category::all();
+        $location = Location::all();
+        $book = Book::findOrFail($id);
+
+        return array('location' => $location, 'categories' => $categories, 'book' => $book);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'title' => 'required|unique:books,title,'.Book::find($id)->id.'',
+            'pages' => 'required|digits_between:2,5',
+            'price' => 'required',
+            'total' => 'required|digits_between:2,5',
+            'company' => 'required',
+            'file' => 'required',
+        ]);
+        Book::findOrFail($id)
+        ->fill([
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'number_of_page' => $request->pages,
+            'price' => $request->price,
+            'image' => $request->file,
+            'total' => $request->total,
+            'author' => $request->author,
+            'publishing_company' => $request->company,
+            'location_id' => $request->location,
+            'category_id' => $request->category,
+        ])
+        ->save();
+
+        return response()
+        ->json(['message' => 'Success: You have edit an book']);
+    }
+
+    public function create()
+    {
+        $location = Location::all();
+        $categories = Category::all();
+
+        return array('location' => $location, 'categories' => $categories);
+    }
+
+    public function store(Request $request)
+    {        
+        $this->validate($request, [
+            'title' => 'required|unique:books',
+            'pages' => 'required|digits_between:2,5',
+            'price' => 'required',
+            'total' => 'required|digits_between:2,5',
+            'company' => 'required',
+            'file' => 'required',
+        ]);
+        
+            Book::Create([
+                'admin_id' => Auth::user()->id,
+                'title' => $request->title,
+                'slug' => Str::slug($request->title),
+                'number_of_page' => $request->pages,
+                'price' => $request->price,
+                'total' => $request->total,
+                'author' => $request->author,
+                'image' => $request->file,
+                'publishing_company' => $request->company,
+                'location_id' => $request->location,
+                'category_id' => $request->category,
+            ]);
+            for($i = 0 ; $i < $request->total; $i++) {
+                BookDetail::Create([
+                    'book_id' => Book::orderBy('id', 'desc')->first()->id,
+                    'isAvailable' => 1,
+                ]);
+            }
+            return response()
+            ->json(['message' => 'Success: You have added an book']);
+         
+    }
+
+    public function destroy($id)
+    {
+        Book::where('id', $id)->firstOrFail()->delete();
+
+        return response()
+            ->json(['message' => 'Success: You have delete an book']);
     }
 }

@@ -81,19 +81,31 @@ Route::get('/admin/borrow/create', 'Admin\BorrowController@create');
 
 Route::post('/admin/borrow', 'Admin\BorrowController@store');
 
+Route::put('/admin/borrow/{idNote}/{idBook}/pay', 'Admin\BorrowController@payBook');
+
 Route::delete('/admin/borrow/{id}', 'Admin\BorrowController@destroy');
 
 Route::get('/admin/librarycardlisting', 'Admin\BorrowController@cardlisting');
 
 });
-
 // API 
 Route::group([
     'prefix' => 'api'
 ], function () {
+
+    Route::get('book/create', 'ApiController@create');
+
     Route::get('listbook', 'ApiController@index');
 
     Route::get('book/{id}', 'ApiController@detail');
+
+    Route::get('book/{id}/edit', 'ApiController@edit');
+
+    Route::put('book/{id}', 'ApiController@update');
+
+    Route::post('book', 'ApiController@store');
+
+    Route::delete('book/{id}', 'ApiController@destroy');
 
     Route::get('image/{slug}', 'ApiController@getImage');
 
@@ -101,6 +113,6 @@ Route::group([
 
     Route::post('register', 'ApiController@signup');
 
-    Route::get('logout', 'ApiController@logout');
+    Route::post('logout', 'ApiController@logout');
       
 });

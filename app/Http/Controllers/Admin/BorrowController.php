@@ -40,46 +40,38 @@ class BorrowController extends Controller
 
     public function edit($id)
     {
-        $borrownote = DB::table('borrowred_note');
+        $borrownote = BorrowedNoteDetail::where('borrowed_note_id', '=', $id)->get();
 
-        return view('admin.books.edit', compact('categories', 'location', 'book'));
+        return view('admin.notes.pay', compact('borrownote', 'id'));
     }
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'title' => 'required|unique:books,title,'.Book::find($id)->id.'',
-            'pages' => 'required|digits_between:2,5',
-            'price' => 'required',
-            'total' => 'required|digits_between:2,5',
-            'company' => 'required',
-        ]);
         
-        if ($request->hasFile('file')) {
-            $filename = $request->file->getClientOriginalName();
-            $request->file->storeAs('public/upload', $filename);
-            Book::findOrFail($id)
-            ->fill([
-                'image' => $filename,
-                ])
-            ->save();
-            }
-
-        Book::findOrFail($id)
+        BorrowedNote::findOrFail($id)
         ->fill([
-            'title' => $request->title,
-            'slug' => Str::slug($request->title),
-            'number_of_page' => $request->pages,
-            'price' => $request->price,
-            'total' => $request->total,
-            'author' => $request->author,
-            'publishing_company' => $request->company,
-            'location_id' => $request->location,
-            'category_id' => $request->category,
+            'is_payed' => 1,
+            'date_pay' => Carbon::now()
         ])
         ->save();
 
-        return redirect('admin/book')->with('message', 'EDITED SUCCESS!');
+        return redirect('admin/borrow')->with('message', 'EDITED SUCCESS!');
+    }
+
+    public function payBook(Request $request, $idNote, $idBook)
+    {
+        $this->validate($request, [
+            'indemnification_money' => 'required',
+        ]);
+        
+        BorrowedNoteDetail::where([['book_detail_id','=',$idBook],['borrowed_note_id','=', $idNote]])->first()
+        ->fill([
+            'indemnification_money' => $request->input('indemnification_money', 0),
+            'date_pay_real' => Carbon::now(),
+        ])
+        ->save();
+        
+        return redirect()->back();
     }
 
     public function create()
@@ -103,9 +95,14 @@ class BorrowController extends Controller
                 BorrowedNoteDetail::Create([
                     'book_detail_id' => BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->first()->id,
                     'borrowed_note_id' => BorrowedNote::orderBy('id', 'desc')->first()->id,
-                    'indemnification_money' => 0,
+                    'indemnification_money' => -1,
                     'date_pay_real' => Carbon::now()->addMonth(6),
                 ]);
+                BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->first()
+                    ->fill([
+                        'isAvailable' => 0,
+                        ])
+                    ->save();
             }
 
             return (['message' => 'Success']);
@@ -113,11 +110,6 @@ class BorrowController extends Controller
 
     public function destroy($id)
     {
-        // try {
-        //     User::where('id', $id)->firstOrFail()->delete();
-        // } catch (ModelCouldNotDeletedException $exception) {
-        //     return (['error' => 'U cant delete it']);
-        // }
         Book::where('id', $id)->firstOrFail()->delete();
 
         return redirect()->back()->with('message', 'DELETED SUCCESS!');;
