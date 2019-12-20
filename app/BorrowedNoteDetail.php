@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Illuminate\Database\Eloquent\Builder;
 class BorrowedNoteDetail extends Model
 {
     use Notifiable;
@@ -25,5 +25,13 @@ class BorrowedNoteDetail extends Model
      * @var string
      */
     protected $table = 'borrowed_note_detail';
-    protected $primaryKey = 'borrowed_note_id';
+    protected $primaryKey = ['borrowed_note_id', 'book_detail_id'];
+    public $timestamps = false;
+    public $incrementing = false;
+
+    protected function setKeysForSaveQuery(Builder $query)
+    {
+        return $query->where('borrowed_note_id', $this->getAttribute('borrowed_note_id'))
+                     ->where('book_detail_id', $this->getAttribute('book_detail_id'));
+    }
 }

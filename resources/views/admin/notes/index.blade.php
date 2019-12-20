@@ -47,9 +47,13 @@
                         {{ method_field('DELETE') }}
                         <div id="category">
                             <p>{{ $value->name }}</p>
-                            <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure ?') "
-                                value="Delete">
+                            {{-- <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure ?') "
+                                value="Delete"> --}}
+                            @if ($value->is_payed == 1)
+                            <a class="btn btn-success" href="/admin/borrow/{{ $value->id }}/detail" role="button">Payed</a>
+                            @else 
                             <a class="btn btn-primary" href="/admin/borrow/{{ $value->id }}/pay" role="button">Pay</a>
+                            @endif
                         </div>
                     </form>
                 </td>

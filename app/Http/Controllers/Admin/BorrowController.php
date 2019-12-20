@@ -24,7 +24,7 @@ class BorrowController extends Controller
         $notes = DB::table('borrowed_note')
             ->join('library_card', 'borrowed_note.library_card_id', '=', 'library_card.id')
             ->join('readers', 'readers.id', '=', 'library_card.reader_id')
-            ->select('borrowed_note.id', 'readers.name')
+            ->select('borrowed_note.id', 'readers.name', 'borrowed_note.is_payed')
             ->orderBy('id', 'asc')
             ->get();
 
@@ -40,9 +40,19 @@ class BorrowController extends Controller
 
     public function edit($id)
     {
-        $borrownote = BorrowedNoteDetail::where('borrowed_note_id', '=', $id)->get();
+        $borrownote = DB::table('borrowed_note_detail')
+        ->join('book_detail', 'borrowed_note_detail.book_detail_id', '=', 'book_detail.id')
+        ->join('books', 'books.id', '=', 'book_detail.book_id')
+        ->select('borrowed_note_detail.book_detail_id' , 'borrowed_note_detail.indemnification_money', 'books.title')
+        ->where('borrowed_note_detail.borrowed_note_id', '=', $id)->get();
+        
+        if( BorrowedNoteDetail::where('borrowed_note_id', '=', $id)->where('indemnification_money', '=', -1)->first() == null) {
+            $canPay = 1;
+        } else {
+            $canPay = 2;
+        }
 
-        return view('admin.notes.pay', compact('borrownote', 'id'));
+        return view('admin.notes.pay', compact('borrownote', 'id', 'canPay'));
     }
 
     public function update(Request $request, $id)
@@ -55,7 +65,7 @@ class BorrowController extends Controller
         ])
         ->save();
 
-        return redirect('admin/borrow')->with('message', 'EDITED SUCCESS!');
+        return redirect('admin/borrow')->with('message', 'PAYED SUCCESS!');
     }
 
     public function payBook(Request $request, $idNote, $idBook)
@@ -63,15 +73,40 @@ class BorrowController extends Controller
         $this->validate($request, [
             'indemnification_money' => 'required',
         ]);
-        
+        if( $request->indemnification_money == -1 )
+            {
+                $money = 0;
+            }
+        else {
+            $money = $request->indemnification_money;
+        }
         BorrowedNoteDetail::where([['book_detail_id','=',$idBook],['borrowed_note_id','=', $idNote]])->first()
         ->fill([
-            'indemnification_money' => $request->input('indemnification_money', 0),
+            'indemnification_money' => $money,
             'date_pay_real' => Carbon::now(),
         ])
         ->save();
-        
+
+        BookDetail::findorFail($idBook)
+        ->fill([
+            'isAvailable' => 1,
+        ])
+        ->save();
+ 
         return redirect()->back();
+    }
+
+    public function payDetail($id) 
+    {
+        $payDetail = DB::table('borrowed_note')
+            ->join('borrowed_note_detail', 'borrowed_note.id', '=', 'borrowed_note_detail.borrowed_note_id')
+            ->join('book_detail', 'borrowed_note_detail.book_detail_id', '=', 'book_detail.id')
+            ->join('books', 'books.id', '=', 'book_detail.book_id')
+            ->select('book_detail.id', 'books.title', 'borrowed_note_detail.date_pay_real', 'borrowed_note_detail.indemnification_money')
+            ->where('borrowed_note.id', $id)
+            ->get();
+
+        return view('admin.notes.paydetail', compact('payDetail'));
     }
 
     public function create()
@@ -90,15 +125,16 @@ class BorrowController extends Controller
                 'is_payed' => 0,
                 'total' => $request->total
             ]);
-            
+
+            //bug fix create borrow ( duplicate book detail in borrowed_note_detail)
             for($i = 0 ; $i < $request->total; $i++) {
                 BorrowedNoteDetail::Create([
-                    'book_detail_id' => BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->first()->id,
+                    'book_detail_id' => BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->orderBy('id', 'desc')->first()->id,
                     'borrowed_note_id' => BorrowedNote::orderBy('id', 'desc')->first()->id,
                     'indemnification_money' => -1,
                     'date_pay_real' => Carbon::now()->addMonth(6),
                 ]);
-                BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->first()
+                BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->orderBy('id', 'desc')->first()
                     ->fill([
                         'isAvailable' => 0,
                         ])

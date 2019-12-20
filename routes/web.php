@@ -75,6 +75,8 @@ Route::get('/admin/borrow', 'Admin\BorrowController@index');
 
 Route::get('/admin/borrow/{id}/pay', 'Admin\BorrowController@edit');
 
+Route::get('/admin/borrow/{id}/detail', 'Admin\BorrowController@payDetail');
+
 Route::put('/admin/borrow/{id}', 'Admin\BorrowController@update');
 
 Route::get('/admin/borrow/create', 'Admin\BorrowController@create');

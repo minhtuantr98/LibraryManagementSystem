@@ -14,13 +14,14 @@ class CreateBorrowedNoteDetailTable extends Migration
     public function up()
     {
         Schema::create('borrowed_note_detail', function (Blueprint $table) {
-            $table->bigInteger('book_detail_id');
+            $table->bigInteger('book_detail_id')->unsigned();;
             $table->bigInteger('borrowed_note_id')->unsigned();
             $table->double('indemnification_money');
             $table->timestamp('date_pay_real')->nullable();
             $table->timestamps();
             
-            $table->primary('book_detail_id', 'borrowed_note_id');
+            $table->primary(array('book_detail_id', 'borrowed_note_id'));
+
         });
     }
 
