@@ -97,24 +97,24 @@ Route::group([
 
     Route::get('book/create', 'ApiController@create');
 
-    Route::get('listbook', 'ApiController@index');
+    Route::get('book/list', 'ApiController@index');
 
-    Route::get('book/{id}', 'ApiController@detail');
+    Route::get('book/getDetail/{id}', 'ApiController@detail');
 
     Route::get('book/{id}/edit', 'ApiController@edit');
 
-    Route::put('book/{id}', 'ApiController@update');
+    Route::put('book/{id}/update', 'ApiController@update');
 
-    Route::post('book', 'ApiController@store');
+    Route::post('book/store', 'ApiController@store');
 
-    Route::delete('book/{id}', 'ApiController@destroy');
+    Route::delete('book/{id}/delete', 'ApiController@destroy');
 
-    Route::get('image/{slug}', 'ApiController@getImage');
+    Route::get('/book/getImage/{slug}', 'ApiController@getImage');
 
     Route::post('login', 'ApiController@login');
 
     Route::post('register', 'ApiController@signup');
 
     Route::post('logout', 'ApiController@logout');
-      
+
 });

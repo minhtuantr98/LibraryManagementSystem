@@ -33,7 +33,7 @@ class ApiController extends Controller
     }
 
     public function getImage($slug) {
-        return view('API.image', compact('slug'));
+        return "http://35.240.132.121/storage/upload/".$slug."";
     }
      /**
      * Create user
