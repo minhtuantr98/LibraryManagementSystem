@@ -126,7 +126,6 @@ class BorrowController extends Controller
                 'total' => $request->total
             ]);
 
-            //bug fix create borrow ( duplicate book detail in borrowed_note_detail)
             for($i = 0 ; $i < $request->total; $i++) {
                 BorrowedNoteDetail::Create([
                     'book_detail_id' => BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->orderBy('id', 'desc')->first()->id,
@@ -150,4 +149,5 @@ class BorrowController extends Controller
 
         return redirect()->back()->with('message', 'DELETED SUCCESS!');;
     }
+
 }

@@ -72,6 +72,11 @@ class ApiController extends Controller
      * @return [string] token_type
      * @return [string] expires_at
      */
+
+    public function getToken(Request $request) {
+        return $request->session()->token();
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -158,6 +163,20 @@ class ApiController extends Controller
         $categories = Category::all();
 
         return array('location' => $location, 'categories' => $categories);
+    }
+
+    public function test(Request $request) 
+    {
+            $title = $request->title;
+            $pages = $request->pages;
+            $price = $request->price;
+            $total = $request->total;
+            $author = $request->author;
+            $image = $request->file;
+            $company = $request->company;
+            $location = $request->location;
+            $category = $request->category;
+            return view ('test',compact('title', 'pages', 'price', 'total', 'author', 'image', 'company', 'location', 'category'));
     }
 
     public function store(Request $request)

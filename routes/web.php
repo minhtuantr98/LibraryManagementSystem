@@ -95,26 +95,29 @@ Route::group([
     'prefix' => 'api'
 ], function () {
 
-    Route::get('book/create', 'ApiController@create');
+    Route::get('book/create', 'ApiController@create')->middleware('auth:api');
 
     Route::get('book/list', 'ApiController@index');
 
     Route::get('book/getDetail/{id}', 'ApiController@detail');
 
-    Route::get('book/{id}/edit', 'ApiController@edit');
+    Route::get('book/{id}/edit', 'ApiController@edit')->middleware('auth:api');
 
-    Route::put('book/{id}/update', 'ApiController@update');
+    Route::put('book/{id}/update', 'ApiController@update')->middleware('auth:api');
 
-    Route::post('book/store', 'ApiController@store');
+    Route::post('book/store', 'ApiController@store')->middleware('auth:api');;
 
-    Route::delete('book/{id}/delete', 'ApiController@destroy');
+    Route::delete('book/{id}/delete', 'ApiController@destroy')->middleware('auth:api');
 
     Route::get('/book/getImage/{slug}', 'ApiController@getImage');
 
     Route::post('login', 'ApiController@login');
 
+    Route::get('session/token', 'ApiController@getToken');
+
     Route::post('register', 'ApiController@signup');
 
     Route::post('logout', 'ApiController@logout');
 
+    Route::post('test', 'ApiController@test');
 });

@@ -114,13 +114,7 @@ class BookController extends Controller
                 'publishing_company' => $request->company,
                 'location_id' => $request->location,
                 'category_id' => $request->category,
-            ]);
-            for($i = 0 ; $i < $request->total; $i++) {
-                BookDetail::Create([
-                    'book_id' => Book::orderBy('id', 'desc')->first()->id,
-                    'isAvailable' => 1,
-                ]);
-            }
+            ]);       
             return redirect('admin/book')->with('message', 'CREATED SUCCESS!');
         }    
     }
@@ -134,6 +128,6 @@ class BookController extends Controller
         // }
         Book::where('id', $id)->firstOrFail()->delete();
 
-        return redirect()->back()->with('message', 'DELETED SUCCESS!');;
+        return redirect()->back()->with('message', 'DELETED SUCCESS!');
     }
 }
