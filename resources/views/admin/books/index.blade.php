@@ -27,6 +27,12 @@
                     {{ session()->get('message') }}
                 </div>
     @endif
+
+    @if(session()->has('error'))
+                <div class="alert alert-danger">
+                    {{ session()->get('error') }}
+                </div>
+    @endif
     <div class="panel-body">
         <a href="/admin/book/create" class="badge badge-dark">Create Book</a>
     </div>

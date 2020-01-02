@@ -38,6 +38,11 @@
                     {{ session()->get('message') }}
                 </div>
     @endif
+    @if(session()->has('error'))
+                <div class="alert alert-danger">
+                    {{ session()->get('error') }}
+                </div>
+    @endif
     <div>
         <table class="table">
             <thead>

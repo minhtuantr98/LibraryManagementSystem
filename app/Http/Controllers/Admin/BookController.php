@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
-
+use App\Exceptions\ModelCouldNotDeletedException;
 class BookController extends Controller
 {
     public function index()
@@ -121,13 +121,12 @@ class BookController extends Controller
 
     public function destroy($id)
     {
-        // try {
-        //     User::where('id', $id)->firstOrFail()->delete();
-        // } catch (ModelCouldNotDeletedException $exception) {
-        //     return (['error' => 'U cant delete it']);
-        // }
-        Book::where('id', $id)->firstOrFail()->delete();
-
+        try {
+            Book::where('id', $id)->firstOrFail()->delete();
+        } catch (ModelCouldNotDeletedException $exception) {
+            return redirect()->back()->with(['error' => 'U cant delete it because this book is has been borrowed']);
+        }
+        
         return redirect()->back()->with('message', 'DELETED SUCCESS!');
     }
 }

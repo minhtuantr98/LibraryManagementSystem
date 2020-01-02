@@ -2,10 +2,12 @@
 
 namespace App;
 
+use DB;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Exceptions\ModelCouldNotDeletedException;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Book extends Model
 {
@@ -26,4 +28,17 @@ class Book extends Model
      * @var string
      */
     protected $table = 'books';
+
+    public function delete()
+    {   
+        if (DB::table('borrowed_note_detail')
+        ->join('book_detail', 'borrowed_note_detail.book_detail_id' , '=', 'book_detail.id')
+        ->join('books', 'book_detail.book_id' , '=', 'books.id')
+        ->where('books.id' , $this->id)
+        ->count() > 0 ){
+            throw new ModelCouldNotDeletedException();
+        }
+    
+        return parent::delete();
+    }
 }

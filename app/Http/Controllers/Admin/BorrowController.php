@@ -87,11 +87,11 @@ class BorrowController extends Controller
         ])
         ->save();
 
-        BookDetail::findorFail($idBook)
-        ->fill([
-            'isAvailable' => 1,
-        ])
-        ->save();
+        // BookDetail::findorFail($idBook)
+        // ->fill([
+        //     'isAvailable' => 1,
+        // ])
+        // ->save();
  
         return redirect()->back();
     }
@@ -133,21 +133,14 @@ class BorrowController extends Controller
                     'indemnification_money' => -1,
                     'date_pay_real' => Carbon::now()->addMonth(6),
                 ]);
-                BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->orderBy('id', 'desc')->first()
-                    ->fill([
-                        'isAvailable' => 0,
-                        ])
-                    ->save();
+                // BookDetail::where('book_id', $books[$i])->where('isAvailable', 1)->orderBy('id', 'desc')->first()
+                //     ->fill([
+                //         'isAvailable' => 0,
+                //         ])
+                //     ->save();
             }
 
             return (['message' => 'Success']);
-    }
-
-    public function destroy($id)
-    {
-        Book::where('id', $id)->firstOrFail()->delete();
-
-        return redirect()->back()->with('message', 'DELETED SUCCESS!');;
     }
 
 }

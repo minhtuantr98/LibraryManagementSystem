@@ -56,19 +56,16 @@ class LocationController extends Controller
         ]);
         
         return redirect('/admin/location');
-
     }
 
     public function destroy($id)
     {
-        // try {
-        //     User::where('id', $id)->firstOrFail()->delete();
-        // } catch (ModelCouldNotDeletedException $exception) {
-        //     return (['error' => 'U cant delete it']);
-        // }
+        if ($id = 1) {
+            return redirect()->back()->with("error", "You can't delete this !! It's Default");
+        }
+
         Location::where('id', $id)->firstOrFail()->delete();
 
         return redirect()->back();
-        
     }
 }
