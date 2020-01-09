@@ -22,14 +22,15 @@ class BookController extends Controller
             $_GET['title'] ='';
         }
 
-        $books = Book::where('title', 'LIKE', '%'.$_GET['title'].'%')->paginate(5);
+        $books = Book::where('title', 'LIKE', '%'.$_GET['title'].'%')->where('isDeleted', '=', '0')->paginate(5);
 
         return view('admin.books.index', compact('books'));
     }
 
     public function listing() 
     {
-        return DB::table('books AS t')
+	    return DB::table('books AS t')
+		->where('t.isDeleted', '=', '0')
            ->select('t.id AS value', 't.title AS text')
            ->get();
     }
@@ -113,7 +114,8 @@ class BookController extends Controller
                 'image' => $filename,
                 'publishing_company' => $request->company,
                 'location_id' => $request->location,
-                'category_id' => $request->category,
+		'category_id' => $request->category,
+		'isDeleted' => 0
             ]);       
             return redirect('admin/book')->with('message', 'CREATED SUCCESS!');
         }    
@@ -121,12 +123,17 @@ class BookController extends Controller
 
     public function destroy($id)
     {
-        try {
-            Book::where('id', $id)->firstOrFail()->delete();
-        } catch (ModelCouldNotDeletedException $exception) {
-            return redirect()->back()->with(['error' => 'U cant delete it because this book is has been borrowed']);
-        }
-        
+        if( BookDetail::where('book_id', $id)->where('isAvailable', 0)->first() )
+	{
+		return redirect()->back()->with([ 'error' => 'This book has already been borrowed']);
+	}
+
+	Book::findOrFail($id)
+		->fill([
+			'isDeleted' => 1
+		])
+		->save();
+
         return redirect()->back()->with('message', 'DELETED SUCCESS!');
     }
 }

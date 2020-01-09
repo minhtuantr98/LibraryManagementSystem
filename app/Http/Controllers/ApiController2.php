@@ -182,18 +182,18 @@ class ApiController extends Controller
 	    $headerCon = $request->header('Content-Type');
             //return view ('test',compact('title', 'pages', 'price', 'total', 'author', 'image', 'company', 'location', 'category', 'headerAuthor', 'headerAcc', 'headerCon'));
 		$content = file_get_contents("php://input");
-	$test = str_replace('=', ':', $content);    
+//	$test = Str::replaceArray('=', [':'], $content);    
 	    $data = json_decode($test, true);
 //if (!$content)
-  //  echo "Mở file không thành công";
+ //   echo "Mở file không thành công";
 //else {
-  //  while (!feof($content)) { // hàm feof sẽ trả về true nếu ở vị trí cuối cùng của file
+//    while (!feof($content)) { // hàm feof sẽ trả về true nếu ở vị trí cuối cùng của file
 	   
 //	    $test = Str::replaceArray('=', [':'], $content);
 
   //  }
 //}
-	return $data;
+	return $content;
 		//return $data;
 		//$request = Request::instance();
 
@@ -206,12 +206,8 @@ class ApiController extends Controller
     }
 
     public function store(Request $request)
-    {
-	$content = file_get_contents("php://input");
-	$test = str_replace('=', ':', $content);
-	$data = json_decode($test, true);
-	return $data->title;        
-        $this->validate($data, [
+    {        
+        $this->validate($request, [
             'title' => 'required|unique:books',
             'pages' => 'required|digits_between:2,5',
             'price' => 'required',
@@ -222,19 +218,19 @@ class ApiController extends Controller
         
             Book::Create([
                 'admin_id' => Auth::user()->id,
-                'title' => $data->title,
-                'slug' => Str::slug($data->title),
-                'number_of_page' => $data->pages,
-                'price' => $data->price,
-                'total' => $data->total,
-                'author' => $data->author,
-                'image' => $data->file,
-                'publishing_company' => $data->company,
-                'location_id' => $data->location,
-		'category_id' => $data->category,
+                'title' => $request->title,
+                'slug' => Str::slug($request->title),
+                'number_of_page' => $request->pages,
+                'price' => $request->price,
+                'total' => $request->total,
+                'author' => $request->author,
+                'image' => $request->file,
+                'publishing_company' => $request->company,
+                'location_id' => $request->location,
+		'category_id' => $request->category,
 		'isDeleted' => 0,
             ]);
-            for($i = 0 ; $i < $data->total; $i++) {
+            for($i = 0 ; $i < $request->total; $i++) {
                 BookDetail::Create([
                     'book_id' => Book::orderBy('id', 'desc')->first()->id,
                     'isAvailable' => 1,

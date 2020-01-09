@@ -101,13 +101,13 @@ Route::group([
 
     Route::get('book/getDetail/{id}', 'ApiController@detail');
 
-    Route::get('book/{id}/edit', 'ApiController@edit')->middleware('auth:api');
+    Route::get('book/edit/{id}', 'ApiController@edit')->middleware('auth:api');
 
-    Route::put('book/{id}/update', 'ApiController@update')->middleware('auth:api');
+    Route::put('book/update/{id}', 'ApiController@update')->middleware('auth:api');
 
     Route::post('book/store', 'ApiController@store')->middleware('auth:api');;
 
-    Route::delete('book/{id}/delete', 'ApiController@destroy')->middleware('auth:api');
+    Route::delete('book/delete/{id}', 'ApiController@destroy')->middleware('auth:api');
 
     Route::get('/book/getImage/{slug}', 'ApiController@getImage');
 
@@ -119,5 +119,6 @@ Route::group([
 
     Route::post('logout', 'ApiController@logout');
 
-    Route::post('test', 'ApiController@test');
+ Route::post('test', 'ApiController@test');
+    Route::post('test2', 'ApiController2@test');
 });
