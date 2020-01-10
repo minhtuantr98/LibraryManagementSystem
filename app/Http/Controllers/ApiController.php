@@ -26,7 +26,7 @@ class ApiController extends Controller
             $_GET['title'] ='';
         }
 
-        return Book::where('title', 'LIKE', '%'.$_GET['title'].'%')->get();
+        return Book::where('title', 'LIKE', '%'.$_GET['title'].'%')->where('isDeleted', '=', '0')->get();
     }
 
     public function detail($id) {
@@ -131,26 +131,35 @@ class ApiController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'title' => 'required|unique:books,title,'.Book::find($id)->id.'',
-            'pages' => 'required|digits_between:2,5',
-            'price' => 'required',
-            'total' => 'required|digits_between:2,5',
-            'company' => 'required',
-            'file' => 'required',
-        ]);
+
+       // $this->validate($request, [
+        //    'title' => 'required|unique:books,title,'.Book::find($id)->id.'',
+         //   'pages' => 'required|digits_between:2,5',
+         //   'price' => 'required',
+         //   'total' => 'required|digits_between:2,5',
+          //  'company' => 'required',
+         //   'file' => 'required',
+	    //  ]);
+	    
+	$content = file_get_contents("php://input");
+        $test = str_replace('=', ':', $content);
+        $test2 = str_replace('%22', '"', $test);
+        $test3 = str_replace('&',',', $test2);
+        $test4 = rtrim($test3, ",");
+        $test5 = '{ ' . str_replace('&',',', $test4) . ' }';
+        $data = json_decode($test5, true);
         Book::findOrFail($id)
         ->fill([
-            'title' => $request->title,
-            'slug' => Str::slug($request->title),
-            'number_of_page' => $request->pages,
-            'price' => $request->price,
-            'image' => $request->file,
-            'total' => $request->total,
-            'author' => $request->author,
-            'publishing_company' => $request->company,
-            'location_id' => $request->location,
-            'category_id' => $request->category,
+            'title' => $data['title'],
+            'slug' => Str::slug($data['title']),
+            'number_of_page' => $data['pages'],
+            'price' => $data['price'],
+            'image' => $data['file'],
+            'total' => $data['total'],
+            'author' => $data['author'],
+            'publishing_company' => $data['company'],
+            'location_id' => $data['location'],
+            'category_id' => $data['category'],
         ])
         ->save();
 
@@ -181,9 +190,12 @@ class ApiController extends Controller
 	    $headerAcc = $request->header('Accept');
 	    $headerCon = $request->header('Content-Type');
             //return view ('test',compact('title', 'pages', 'price', 'total', 'author', 'image', 'company', 'location', 'category', 'headerAuthor', 'headerAcc', 'headerCon'));
-		$content = file_get_contents("php://input");
-	$test = str_replace('=', ':', $content);    
-	    $data = json_decode($test, true);
+//		$content = file_get_contents("php://input");
+//	$test = str_replace('=', ':', $content); 
+//	$test2 = str_replace('%22', '"', $test);
+//	//$test3 = str_replace('&',',', $test2);
+//	$test3 = '{ ' . str_replace('&',',', $test2) . ' }';   
+//	    $data = json_decode($test, true);
 //if (!$content)
   //  echo "Mở file không thành công";
 //else {
@@ -193,8 +205,17 @@ class ApiController extends Controller
 
   //  }
 //}
-	return $data;
-		//return $data;
+//	$titletest = $test3;
+	$content = file_get_contents("php://input");
+        $test = str_replace('=', ':', $content);
+        $test2 = str_replace('%22', '"', $test);
+	$test3 = str_replace('&',',', $test2);
+        $test4 = rtrim($test3, ",");
+        $test5 = '{ ' . str_replace('&',',', $test4) . ' }';
+        $data = json_decode($test5, true);
+	return  $data;
+	//return $test3;
+		//return $data['title'];
 		//$request = Request::instance();
 
 		// Now we can get the content from it
@@ -208,38 +229,40 @@ class ApiController extends Controller
     public function store(Request $request)
     {
 	$content = file_get_contents("php://input");
-	$test = str_replace('=', ':', $content);
-	$data = json_decode($test, true);
-	return $data->title;        
-        $this->validate($data, [
-            'title' => 'required|unique:books',
-            'pages' => 'required|digits_between:2,5',
-            'price' => 'required',
-            'total' => 'required|digits_between:2,5',
-            'company' => 'required',
-            'file' => 'required',
-        ]);
-        
+        $test = str_replace('=', ':', $content);
+        $test2 = str_replace('%22', '"', $test);
+        $test3 = str_replace('&',',', $test2);
+        $test4 = rtrim($test3, ",");
+        $test5 = '{ ' . str_replace('&',',', $test4) . ' }';
+        $data = json_decode($test5, true);        
+      //  $this->validate($data, [
+        //    'title' => 'required|unique:books',
+          //  'pages' => 'required|digits_between:2,5',
+            //'price' => 'required',
+           // 'total' => 'required|digits_between:2,5',
+           // 'company' => 'required',
+           // 'file' => 'required',
+       // ]);
             Book::Create([
                 'admin_id' => Auth::user()->id,
-                'title' => $data->title,
-                'slug' => Str::slug($data->title),
-                'number_of_page' => $data->pages,
-                'price' => $data->price,
-                'total' => $data->total,
-                'author' => $data->author,
-                'image' => $data->file,
-                'publishing_company' => $data->company,
-                'location_id' => $data->location,
-		'category_id' => $data->category,
+                'title' => $data['title'],
+                'slug' => Str::slug($data['title']),
+		'number_of_page' => $data['pages'],
+                'price' => $data['price'],
+                'total' => $data['total'],
+                'author' => $data['author'],
+                'image' => $data['file'],
+                'publishing_company' => $data['company'],
+                'location_id' => $data['location'],
+		'category_id' => $data['category'],
 		'isDeleted' => 0,
             ]);
-            for($i = 0 ; $i < $data->total; $i++) {
-                BookDetail::Create([
-                    'book_id' => Book::orderBy('id', 'desc')->first()->id,
-                    'isAvailable' => 1,
-                ]);
-            }
+          //  for($i = 0 ; $i < $data->total; $i++) {
+            //    BookDetail::Create([
+              //      'book_id' => Book::orderBy('id', 'desc')->first()->id,
+                //    'isAvailable' => 1,
+               // ]);
+           // }
             return response()
             ->json(['message' => 'Success: You have added an book']);
          
