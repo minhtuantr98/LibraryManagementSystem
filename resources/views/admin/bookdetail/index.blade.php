@@ -34,22 +34,9 @@
                 </div>
     @endif
     <div class="panel-body">
-        <a href="/admin/book/create" class="badge badge-dark">Create Book</a>
+    <a href="/admin/bookdetail/create/{{ $book->id }}" class="badge badge-dark">Create Book Detail</a>
     </div>
-    <form action="/search" method="GET" role="search">
-        <div class="input-group">
-            <input type="text" class="form-control" name="title"
-                placeholder="Search Book"> <span class="input-group-btn">
-                <button type="submit" class="btn btn-default">
-                    <span class="badge badge-dark">Search</span>
-                </button>
-            </span>
-        </div>
-    </form>
     <div>
-        @if(count($books) == 0) 
-                <p style="color:red;font-size:20px">There is no book for you search !!!<p>
-        @else
         <table class="table">
             <thead>
                 <tr>
@@ -57,27 +44,29 @@
                     <th scope="col">Title</th>
                 </tr>
             </thead> 
-            @foreach ($books as $value)
+            @foreach ($bookdetail as $value)
             <tr>
                 <th scope="row" style="padding-top: 16px;">{{ $value->id }}</th>
                 <td>
-                    <form action="/admin/book/{{ $value->id }}" method="post">
+                    <form action="/admin/bookdetail/{{ $value->id }}" method="post">
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
                         <div id="category">
-                            <p>{{ $value->title }}</p>
-                            <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure ?') "
-                                value="Delete">
-                            <a class="btn btn-primary" href="/admin/book/{{ $value->id }}/edit" role="button">Edit</a>
-                            <a class="btn btn-success" href="/admin/bookdetail/list/{{ $value->id }}" role="button">Detail</a>
+                            <p>{{ $book->title }}</p>
+                            @if ($value->isAvailable == 1)
+                                    <input type="submit" class="btn btn-danger" onclick="return confirm('Are you sure ?') " value="Delete">
+                            @else
+                            <a class="btn btn-success" href="#" role="button">Borrowed</a>
+                            @endif
+                            <a class="btn btn-primary" href="/admin/bookdetail/{{ $value->id }}/edit" role="button">Edit</a>
                         </div>
                     </form>
                 </td>
             </tr>
             @endforeach
         </table>
-        <div style="padding-left:300px"> {{ $books->links() }}</div>
-        @endif
+        <div style="padding-left:300px"> {{ $bookdetail->links() }}</div>
+        
     </div>
 </div>
 @endsection

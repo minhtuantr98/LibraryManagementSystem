@@ -89,6 +89,18 @@ Route::delete('/admin/borrow/{id}', 'Admin\BorrowController@destroy');
 
 Route::get('/admin/librarycardlisting', 'Admin\BorrowController@cardlisting');
 
+
+Route::get('/admin/bookdetail/list/{id}', 'Admin\BookDetailController@index');
+
+Route::get('/admin/bookdetail/{id}/edit', 'Admin\BookDetailController@edit');
+
+Route::put('/admin/bookdetail/{id}', 'Admin\BookDetailController@update');
+
+Route::get('/admin/bookdetail/create/{id}', 'Admin\BookDetailController@create');
+
+Route::post('/admin/bookdetail', 'Admin\BookDetailController@store');
+
+Route::delete('/admin/bookdetail/{id}', 'Admin\BookDetailController@destroy');
 });
 // API 
 Route::group([
