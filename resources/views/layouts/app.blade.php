@@ -9,13 +9,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ 'Library Management System' }}</title>
-
+   
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.0.6/highcharts.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
@@ -103,7 +104,7 @@
                                         <li><a href="/admin/borrow">Quản lý mượn trả sách</a></li>
                                         <li><a href="/admin/location">Quản lý vị trí sách</a></li>
                                         <li><a href="/admin/category">Quản lý thể loại sách</a></li>
-                                        <li><a href="#">Thống kê & Báo cáo</a></li>
+                                        <li><a href="/admin/report">Thống kê & Báo cáo</a></li>
                                     </ul>
                                 </nav>
                             </div>
@@ -112,6 +113,9 @@
                     <div class="col-md-9">
                         @yield('content')
                     </div>
+                    @if(isset($usersChart))
+                    {!! $usersChart->script() !!}
+                    @endif
                 @else 
                 <div class="col-md-8">
                         @yield('content')

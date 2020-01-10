@@ -101,6 +101,8 @@ Route::get('/admin/bookdetail/create/{id}', 'Admin\BookDetailController@create')
 Route::post('/admin/bookdetail', 'Admin\BookDetailController@store');
 
 Route::delete('/admin/bookdetail/{id}', 'Admin\BookDetailController@destroy');
+
+Route::get('/admin/report', 'Admin\ReportController@index');
 });
 // API 
 Route::group([
